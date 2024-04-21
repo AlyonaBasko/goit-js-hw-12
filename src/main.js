@@ -13,6 +13,8 @@ let clickCount = 0;
 
 async function loadNextImages() {
     try {
+        clickCount++; 
+
         currentPage++;
         const response = await searchImages(currentQuery, currentPage);
         if (!response) {
@@ -23,8 +25,8 @@ async function loadNextImages() {
         const images = response.hits;
         renderImages(images);
 
-        // Перевірка, чи користувач дійшов до кінця колекції
-        if (gallery.childElementCount >= totalHits) {
+    
+        if (gallery.childElementCount >= totalHits || clickCount >= 15) {
             loadMoreBtn.style.display = 'none';
             endOfResultsMessage.style.display = 'block';
         }
