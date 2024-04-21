@@ -4,15 +4,6 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
 
-export async function fetchAndRenderImages(query, page) {
-    try {
-        const images = await searchImages(query, page);
-        renderImages(images);
-    } catch (error) {
-        console.error('Error fetching and rendering images:', error);
-    }
-}
-
 export function renderImages(images) {
     console.log(images);
     const gallery = document.getElementById('gallery');
@@ -31,7 +22,6 @@ export function renderImages(images) {
     });
     lightbox.refresh();
 
-
     const loadMoreBtn = document.getElementById('load-more-btn');
     if (images.length === 15) {
         loadMoreBtn.style.display = 'block';
@@ -39,7 +29,6 @@ export function renderImages(images) {
         loadMoreBtn.style.display = 'none';
     }
 }
-
 
 
 function createImageCard(image) {
@@ -98,9 +87,3 @@ function showNoImagesMessage() {
         position: 'topRight'
     });
 }
-
-const loadMoreBtn = document.getElementById('load-more-btn');
-loadMoreBtn.addEventListener('click', () => {
-    currentPage++;
-    fetchAndRenderImages(currentQuery, currentPage);
-});
