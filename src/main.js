@@ -1,9 +1,9 @@
 import { searchImages } from './js/pixabay-api.js';
-import { fetchAndRenderImages } from './js/render-functions.js';
+import { renderImages } from './js/render-functions.js';
 
 const searchForm = document.getElementById('search-form');
-
 const loadMoreBtn = document.getElementById('load-more-btn');
+const loader = document.getElementById('loader');
 
 let currentPage = 1;
 let currentQuery = '';
@@ -27,15 +27,14 @@ searchForm.addEventListener('submit', async function(event) {
         return;
     }
 
-    currentPage = 1; // Скидаємо значення сторінки при новому пошуковому запиті
-    currentQuery = query; // Зберігаємо поточний запит
+    currentPage = 1;
+    currentQuery = query;
 
     loader.style.display = 'block';
 
     try {
         const images = await searchImages(query, currentPage);
         renderImages(images);
-        // Показуємо кнопку "Load more" тільки, якщо отримано 15 зображень
         loadMoreBtn.style.display = images.length === 15 ? 'block' : 'none';
     } catch (error) {
         console.error(error);
@@ -43,3 +42,12 @@ searchForm.addEventListener('submit', async function(event) {
         loader.style.display = 'none';
     }
 });
+
+async function fetchAndRenderImages(query, page) {
+    try {
+        const images = await searchImages(query, page);
+        renderImages(images);
+    } catch (error) {
+        console.error('Error fetching and rendering images:', error);
+    }
+}
