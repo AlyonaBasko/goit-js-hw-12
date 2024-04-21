@@ -3,7 +3,6 @@ import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
-
 export function renderImages(images) {
     console.log(images);
     const gallery = document.getElementById('gallery');
@@ -21,7 +20,6 @@ export function renderImages(images) {
     });
     lightbox.refresh();
 }
-
 
 function createImageCard(image) {
     const card = document.createElement('div');
