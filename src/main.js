@@ -4,28 +4,30 @@ import { renderImages } from './js/render-functions.js';
 const searchForm = document.getElementById('search-form');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const loader = document.getElementById('loader');
+const endOfResultsMessage = document.getElementById('end-of-results-message');
 
 let currentPage = 1;
 let currentQuery = '';
+let totalHits = 0;
 
-// Функція для завантаження наступних зображень
 async function loadNextImages() {
     try {
-        // Збільшуємо номер сторінки на 1
         currentPage++;
-
-        // Викликаємо функцію пошуку та рендерингу зображень
         const images = await searchImages(currentQuery, currentPage);
         renderImages(images);
+
+        // Перевірка на кінець колекції
+        if (currentPage * 15 >= totalHits) {
+            loadMoreBtn.style.display = 'none';
+            endOfResultsMessage.style.display = 'block';
+        }
     } catch (error) {
         console.error('Error loading next images:', error);
     }
 }
 
-// Обробник події для натискання на кнопку "Load more"
 loadMoreBtn.addEventListener('click', loadNextImages);
 
-// Обробник події для натискання на кнопку пошуку
 searchForm.addEventListener('submit', async function(event) {
     event.preventDefault();
 
@@ -41,24 +43,20 @@ searchForm.addEventListener('submit', async function(event) {
         return;
     }
 
-    // Оновлюємо значення змінних currentPage та currentQuery
     currentPage = 1;
     currentQuery = query;
 
-    // Відображаємо індикатор завантаження
     loader.style.display = 'block';
 
     try {
-        // Викликаємо функцію пошуку та рендерингу зображень
-        const images = await searchImages(query, currentPage);
-        renderImages(images);
-
-        // Показуємо або ховаємо кнопку "Load more" в залежності від кількості отриманих зображень
-        loadMoreBtn.style.display = images.length === 15 ? 'block' : 'none';
+        const response = await searchImages(query, currentPage);
+        totalHits = response.totalHits; // Оновлення загальної кількості зображень
+        renderImages(response.hits);
+        loadMoreBtn.style.display = 'block';
+        endOfResultsMessage.style.display = 'none'; // При новому пошуку ховаємо повідомлення про кінець результатів
     } catch (error) {
         console.error('Error searching and rendering images:', error);
     } finally {
-        // Ховаємо індикатор завантаження після завершення операції
         loader.style.display = 'none';
     }
 });
