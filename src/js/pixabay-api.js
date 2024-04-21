@@ -15,7 +15,7 @@ export async function searchImages(query, page = 1, perPage = 15) {
 
     try {
         const response = await axios.get(`https://pixabay.com/api/?${params}`);
-        return response.data.hits;
+        return response.data;
     } catch (error) {
         console.error('Error searching images:', error);
         throw error;
