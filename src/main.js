@@ -9,15 +9,22 @@ const endOfResultsMessage = document.getElementById('end-of-results-message');
 let currentPage = 1;
 let currentQuery = '';
 let totalHits = 0;
+let clickCount = 0;
 
 async function loadNextImages() {
     try {
         currentPage++;
-        const images = await searchImages(currentQuery, currentPage);
+        const response = await searchImages(currentQuery, currentPage);
+        if (!response) {
+            console.error('Error loading next images: response is undefined');
+            return;
+        }
+        totalHits = response.totalHits;
+        const images = response.hits;
         renderImages(images);
 
-        // Перевірка на кінець колекції
-        if (currentPage * 15 >= totalHits) {
+        // Перевірка, чи користувач дійшов до кінця колекції
+        if (gallery.childElementCount >= totalHits) {
             loadMoreBtn.style.display = 'none';
             endOfResultsMessage.style.display = 'block';
         }
@@ -50,10 +57,13 @@ searchForm.addEventListener('submit', async function(event) {
 
     try {
         const response = await searchImages(query, currentPage);
-        totalHits = response.totalHits; // Оновлення загальної кількості зображень
-        renderImages(response.hits);
-        loadMoreBtn.style.display = 'block';
-        endOfResultsMessage.style.display = 'none'; // При новому пошуку ховаємо повідомлення про кінець результатів
+        if (!response) {
+            console.error('Error searching images: response is undefined');
+            return;
+        }
+        const images = response.hits;
+        renderImages(images);
+        loadMoreBtn.style.display = images.length === 15 ? 'block' : 'none';
     } catch (error) {
         console.error('Error searching and rendering images:', error);
     } finally {
