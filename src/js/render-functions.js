@@ -7,7 +7,6 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 export function renderImages(images) {
     console.log(images);
     const gallery = document.getElementById('gallery');
-    gallery.innerHTML = '';
 
     if (images.length === 0) {
         showNoImagesMessage();
@@ -21,13 +20,6 @@ export function renderImages(images) {
         gallery.appendChild(card);
     });
     lightbox.refresh();
-
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    if (images.length === 15) {
-        loadMoreBtn.style.display = 'block';
-    } else {
-        loadMoreBtn.style.display = 'none';
-    }
 }
 
 
