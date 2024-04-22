@@ -4,7 +4,6 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
 export function renderImages(images) {
-    console.log(images);
     const gallery = document.getElementById('gallery');
 
     if (images.length === 0) {
@@ -18,6 +17,7 @@ export function renderImages(images) {
         const card = createImageCard(image);
         gallery.appendChild(card);
     });
+
     lightbox.refresh();
 }
 
