@@ -29,7 +29,7 @@ async function loadNextImages() {
 
         renderImages(response.hits);
 
-        if (response.hits.length < 15 || currentPage * 15 >= totalHits || currentPage >= 500 / 15) {
+        if (response.hits.length < 15 || currentPage >= 15 || currentPage * 15 >= totalHits) {
             loadMoreBtn.style.display = 'none';
             console.log("We're sorry, but you've reached the end of search results.");
             return;
