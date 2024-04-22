@@ -31,9 +31,7 @@ async function loadNextImages() {
 
         if (response.hits.length < 15 || currentPage * 15 >= totalHits || currentPage >= 500 / 15) {
             loadMoreBtn.style.display = 'none';
-            showEndOfResultsMessage()
-                .then(() => console.log("We're sorry, but you've reached the end of search results."))
-                .catch(error => console.error('Error displaying end of results message:', error));
+            console.log("We're sorry, but you've reached the end of search results.");
             return;
         }
 
