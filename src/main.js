@@ -9,12 +9,10 @@ const endOfResultsMessage = document.getElementById('end-of-results-message');
 let currentPage = 1;
 let currentQuery = '';
 let totalHits = 0;
-let clickCount = 0;
+let cardHeight = 0;
 
 async function loadNextImages() {
     try {
-        clickCount++; 
-
         currentPage++;
         const response = await searchImages(currentQuery, currentPage);
         if (!response) {
@@ -22,13 +20,19 @@ async function loadNextImages() {
             return;
         }
         totalHits = response.totalHits;
-        const images = response.hits;
-        renderImages(images);
+        renderImages(response.hits);
 
-    
-        if (gallery.childElementCount >= totalHits || clickCount >= 15) {
+        if (currentPage * 15 >= totalHits) {
             loadMoreBtn.style.display = 'none';
             endOfResultsMessage.style.display = 'block';
+        }
+        const gallery = document.getElementById('gallery');
+        if (gallery) {
+            cardHeight = gallery.firstElementChild.getBoundingClientRect().height;
+            
+            window.scrollBy(0, cardHeight * 2);
+        } else {
+            console.error('Element with id "gallery" not found');
         }
     } catch (error) {
         console.error('Error loading next images:', error);
