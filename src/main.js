@@ -4,7 +4,7 @@ import { renderImages } from './js/render-functions.js';
 const searchForm = document.getElementById('search-form');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const loader = document.getElementById('loader');
-const endOfResultsMessage = document.getElementById('end-of-results-message');
+
 
 let currentPage = 1;
 let currentQuery = '';
@@ -14,22 +14,32 @@ let cardHeight = 0;
 async function loadNextImages() {
     try {
         currentPage++;
-        const response = await searchImages(currentQuery, currentPage);
+        const response = await searchImages(currentQuery, currentPage, 15);
         if (!response) {
             console.error('Error loading next images: response is undefined');
             return;
         }
         totalHits = response.totalHits;
+
+        if (response.hits.length === 0 && currentPage === 1) {
+            clearGallery();
+            showNoImagesMessage();
+            return;
+        }
+
         renderImages(response.hits);
 
-        if (currentPage * 15 >= totalHits) {
+        if (response.hits.length < 15 || currentPage * 15 >= totalHits || currentPage >= 500 / 15) {
             loadMoreBtn.style.display = 'none';
-            endOfResultsMessage.style.display = 'block';
+            showEndOfResultsMessage()
+                .then(() => console.log("We're sorry, but you've reached the end of search results."))
+                .catch(error => console.error('Error displaying end of results message:', error));
+            return;
         }
+
         const gallery = document.getElementById('gallery');
         if (gallery) {
             cardHeight = gallery.firstElementChild.getBoundingClientRect().height;
-            
             window.scrollBy(0, cardHeight * 2);
         } else {
             console.error('Element with id "gallery" not found');
@@ -39,10 +49,23 @@ async function loadNextImages() {
     }
 }
 
+
+function clearGallery() {
+    const gallery = document.getElementById('gallery');
+    if (gallery) {
+        gallery.innerHTML = '';
+    }
+}
+
+
+
 loadMoreBtn.addEventListener('click', loadNextImages);
 
 searchForm.addEventListener('submit', async function(event) {
     event.preventDefault();
+
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
 
     const searchInput = document.getElementById('search-input');
     const query = searchInput.value.trim();
