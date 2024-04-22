@@ -4,7 +4,7 @@ import { renderImages } from './js/render-functions.js';
 const searchForm = document.getElementById('search-form');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const loader = document.getElementById('loader');
-
+const endOfResultsMessage = document.getElementById('end-of-results-message');
 
 let currentPage = 1;
 let currentQuery = '';
@@ -31,6 +31,7 @@ async function loadNextImages() {
 
         if (response.hits.length < 15 || currentPage >= 15 || currentPage * 15 >= totalHits) {
             loadMoreBtn.style.display = 'none';
+            endOfResultsMessage.style.display = 'block';
             console.log("We're sorry, but you've reached the end of search results.");
             return;
         }
